@@ -20,6 +20,18 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
+		<!-- 过滤器作用域测试 -->
+		<filter>
+	      <filter-name>filterDemo1</filter-name>
+	      <filter-class>com.yc.web.filters.RightFilter</filter-class>
+	  </filter>
+	  <filter-mapping>
+	      <filter-name>filterDemo1</filter-name>
+	      <url-pattern>/</url-pattern>
+	      <!-- /*是对所有的文件进行拦截 -->
+	  </filter-mapping>
+	
+	
   <!-- 过滤所有请求 -->
    <servlet>
         <servlet-name>golfing</servlet-name>

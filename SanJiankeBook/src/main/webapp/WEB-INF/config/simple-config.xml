@@ -33,4 +33,5 @@
 	<mvc:resources location="/js/" mapping="/js/**" />
 	<!-- 处理webapp下面的静态资源 -->
 	<mvc:resources location="/" mapping="/.html" />
+	<mvc:resources location="/" mapping="/.jsp" />
 </beans>

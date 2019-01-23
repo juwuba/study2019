@@ -445,7 +445,7 @@ public class NovelController {
     
    
     //插入书籍章节
-    @RequestMapping(value="/insertNovlChapter",produces = {"application/text;charset=UTF-8"})
+    @RequestMapping(value="/insertNovlChapter",produces = {"application/text;charset=UTF-8"}) //produces = {"application/text;charset=UTF-8"}解决乱码问题 
     @ResponseBody
     public String insertNovlChapter(@ModelAttribute NovelChapter novelchapter,@RequestParam String des,HttpServletRequest request,Model model) throws IOException{
     	logger.info("insertNovlChapter....");
