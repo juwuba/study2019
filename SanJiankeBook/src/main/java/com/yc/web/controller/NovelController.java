@@ -47,6 +47,8 @@ import com.yc.web.upload.ForFile;
 import com.yc.web.upload.UploadFileUtil;
 import com.yc.web.upload.UploadFileUtil.UploadFile;
 
+import sun.util.logging.resources.logging;
+
 @Controller
 public class NovelController {
     private static final Log logger=LogFactory.getLog(NovelController.class);
@@ -141,6 +143,7 @@ public class NovelController {
 			return "userlogin";
 		}
 	}
+
 
 	//页面登陆界面
 	@RequestMapping(value="/userlogininfo")
@@ -512,5 +515,21 @@ public class NovelController {
 			return "rank";
 	    }
 	*/
+    
+//   进入后台管理页面
+	@RequestMapping(value="/back")
+	public String backjsp(HttpServletRequest request,Model model){
+		return "forward:adminLoginjsp";
+	}
+	
+//修改用户信息
+	
+	@RequestMapping(value="/updateUser")
+	@ResponseBody
+	public String updateUser(HttpServletRequest request,Model model,User user){
+		logger.info("开始修改用户信息");
+		userbiz.updateUserInfo(user);
+		return "1";
+	}
 }
 

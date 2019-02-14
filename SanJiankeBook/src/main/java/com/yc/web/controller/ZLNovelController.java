@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.yc.bean.Admin;
@@ -45,6 +46,7 @@ public class ZLNovelController {
     private Novelbiz novelbiz;
     private NovelChapterbiz chapter;
     private NovelChapter novelchapter;
+    private Admin admin;
     private NovelTypebiz novelTypebiz;
     private RankUtils rankUtils;
     private NovelType noveltype;
@@ -93,7 +95,10 @@ public class ZLNovelController {
 		this.authorbiz = authorbiz;
 	}
     
-
+    @Resource(name="admin")
+	public void setAdmin(Admin admin) {
+		this.admin = admin;
+	}
 	//用户注册
     @RequestMapping(value="/toSave")
     public String addUser(User use){
@@ -212,12 +217,14 @@ public class ZLNovelController {
     * @return
     */
     @RequestMapping(value="adminLogin")
-    public String BackIndex(@RequestParam String adnumber,@RequestParam String adpassword,HttpSession session){
+    public String BackIndex(@RequestParam String adnumber,@RequestParam String adpassword,HttpSession session,ModelAndView mv){
 		logger.info("this is backLogin .......");
 		
 		List<Admin> list=this.adminbiz.adminLogin(adnumber, adpassword);
-		
 		if(!list.isEmpty() ){
+			admin=list.get(0);
+			mv.getModelMap().addAttribute("admin",admin);
+			session.setAttribute("admin", admin);
 			return "../../back/BackIndex";
 		}else if(list.isEmpty()){
 			session.removeAttribute("errmsg");
@@ -505,6 +512,26 @@ public class ZLNovelController {
     	System.out.println(novelChapter);
     	model.addAttribute("novelChapter", novelChapter);
     	return "FindChapter";
-    } 
+    }  
+    
+    //进入后台管理页面
+    @RequestMapping(value="/adminLoginjsp")
+    public String adminLoginjsp( Model model,HttpServletRequest request,HttpSession session){
+    	logger.info("this is chapterContent");
+    	Admin admin =(Admin) session.getAttribute("admin");
+    	if (admin!=null) {
+    		return "../../back/BackIndex";
+    	}
+    	return "../../back/Index";
+    }
+    
+    //销毁管理员登陆信息
+    @RequestMapping(value="/destoryLoging")
+    public String destoryLoging( Model model,HttpServletRequest request,HttpSession session){
+    	logger.info("this is destoryLoging");
+    	 session.setAttribute("admin", null);
+    	return "redirect:adminLoginjsp";
+    }
+    
     
 }

@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</update>
 	
 	<update id="updateUserInfo" parameterType="User">
-	 update user set uname=#{uname},usex=#{usex},standby_1=#{standby_1} where u_number=#{u_number}
+	 update user set uname=#{uname},usex=#{usex},standby_1=#{standby_1},upassword=#{upassword},usex=#{usex} where u_number=#{u_number}
 	</update>
 	
 	<!-- 通过用户名查询用户信息 -->

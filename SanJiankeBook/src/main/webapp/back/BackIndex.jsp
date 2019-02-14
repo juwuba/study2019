@@ -1,6 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+	String path = request.getContextPath();
+	//					http				://		localhost			:	8081				/SpringMvc_Book/
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -79,6 +85,8 @@
 	</div>
 	
 	<div data-options="region:'east',split:true,collapsed:true,title:'帮助'" style="width:100px;padding:10px;">
+	 <!--  <a href="#"  onclick="destoryLoging()" >注销登陆</a> -->
+	<a href="destoryLoging"   >注销登陆</a>
 	</div>
 	
 	<div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">
@@ -114,6 +122,19 @@ $('#aa').accordion({
 	 border:false,
 	 animate:true  
 });
+
+function destoryLoging(){
+	 $.ajax({//销毁登陆信息
+			url:"destoryLoging",
+			type:"get",
+//			data:"des="+des+"&tid="+$("#tid")+"&",
+//			data:{"des":des,"tid":tid,"ndescription":ndescription,"nname":nname},
+//			dataType:"JSON",
+			success:function( data ){
+			}
+		});
+}
+
 
 </script>
 </html>
