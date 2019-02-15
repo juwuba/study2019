@@ -8,7 +8,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 
 public class RightFilter implements Filter {
 
@@ -53,7 +55,10 @@ public class RightFilter implements Filter {
 			chain.doFilter(req, response);
 			System.out.println("过滤器1，Servlet向客户端发送的响应被我拦截到了");
 		}else {
-            request.getRequestDispatcher("userlogininfo").forward(request, response);
+//            request.getRequestDispatcher("userlogininfo").forward(request, response);
+            HttpServletResponse res=(HttpServletResponse) response;
+            res.sendRedirect("userlogininfo");
+            
 		}
 		
 	}

@@ -3,6 +3,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	
+	
+		
   
   <!-- 字符码过滤器 -->
   <filter>
@@ -13,8 +15,6 @@
 			<param-value>utf-8</param-value>
 		</init-param>
 	</filter>
-	
-	
 	<filter-mapping>
 		<filter-name>characterEncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -30,7 +30,10 @@
 	      <url-pattern>/</url-pattern>
 	      <!-- /*是对所有的文件进行拦截 -->
 	  </filter-mapping>
+	  <!-- 关于/无法拦截到请求，我猜原因可能如下，该请求在前面已经被过滤器拦截到了，而/则是所有过滤器都没有被匹配到才会
+	  轮到它匹配，否则是不会轮到它的，一旦出现多个url-pattern同时匹配上，那么按照它们的顺序一个个过滤 -->
 	
+
 	
   <!-- 过滤所有请求 -->
    <servlet>
