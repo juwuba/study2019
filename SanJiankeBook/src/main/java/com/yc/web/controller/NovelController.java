@@ -531,5 +531,14 @@ public class NovelController {
 		userbiz.updateUserInfo(user);
 		return "1";
 	}
+	
+//添加一个用户
+	@RequestMapping(value="/addUserinfo")
+	@ResponseBody
+	public String addUserinfo(HttpServletRequest request,Model model,User user){
+		logger.info("开始添加用户信息");
+		userbiz.addUserinfo2(user);
+		return "1";
+	}
 }
 

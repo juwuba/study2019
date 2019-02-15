@@ -36,10 +36,11 @@
 		<property name="dataSource" ref="dataSource"></property>
 		<!-- 去掉mybatis的配置文件,在spring中完成mybatis的配置 -->
 		
-		<!-- 加入mybatis的属性配置 -->
+		<!-- 加入mybatis的属性配置  比如加入日志，以及开启二级缓存等 -->
 		<property name="configurationProperties">
 			<props>
 				<prop key="logImpl">LOG4J</prop>
+				<prop key="cacheEnabled">true</prop>
 			</props>
 		</property>
 		

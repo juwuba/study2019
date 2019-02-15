@@ -36,6 +36,8 @@ public interface Userbiz {
 	public void updateUser(User user);
 	//用户信息修改
 	public void updateUserInfo(User user);
+	//添加一个用户，加入性别
+	public void addUserinfo2(User user);
 	
 
 }

@@ -3,12 +3,6 @@
     <!--上传的小说显示在后台进行审核，审核分为待审核，通过，未通过，审核通过后才能显示在前台  -->
     <!-- 将待审核的单独放在一个页面中，添加一个通过按钮， -->
    
-    <!-- select nname
-		from novel n
-		inner join novel_type novelType
-		on n.tid=novelType.tid
-		where
-		novelType.tname=#{novelType.tname} and standby_1='通过' -->
 <table id="type_shownovels_info" data-options="fit:true"></table> 
 	
 	<script type="text/javascript">

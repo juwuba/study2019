@@ -129,15 +129,30 @@
             	  datagrid.datagrid("endEdit",editRow);//结束编辑
   				//要获取被编辑的数据
   				var rows = datagrid.datagrid("getChanges")[0];
-  				
+  				alert(rows.uid);
   				//发请求到数据库更新
   				if( rows ==  undefined ){ //说明用户没有进行任何的操作
   					datagrid.datagrid("rejectChanges");
   					datagrid.datagrid("unselectAll");	//取消所有选中的行
   					editRow = undefined;
-  				}else {
-  					console.info(rows);
-  					//alert(rows);
+  				}else if(rows.uid == undefined | rows.uid==null ) { //如果是保存用户信息操作
+  					$.post("addUserinfo",rows,function (data){
+  						data = $.trim(data);
+  						if( data == "1" ){
+  							$.messager.show({title:'提示',msg:'用户信息保存成功...',timeout:2000,showType:'slide'});
+  							
+  							datagrid.datagrid("rejectChanges");
+  							datagrid.datagrid("unselectAll");   //取消所有的选中的行
+  							editRow = undefined;
+  							rows == undefined;
+  							//充新加载数据
+  							datagrid.datagrid("reload");
+  						}else{
+  							$.messager.alert('失败提示',flag+'用户信息保存失败!','error');
+  						}
+  					});
+  				}else{
+  					  					//alert(rows);
   					  	$.post("updateUser",rows,function (data){
   						data = $.trim(data);
   						if( data == "1" ){

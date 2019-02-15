@@ -117,5 +117,11 @@ private  BaseDao bd;
 		this.bd.update(user, "updateUserInfo");
 	}
 
+	//添加一个用户，加入性别列
+	@Override
+	public void addUserinfo2(User user) {
+		this.bd.add(user, "addUserInfo2");
+	}
+
 
 }
