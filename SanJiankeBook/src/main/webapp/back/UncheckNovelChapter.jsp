@@ -26,6 +26,9 @@
 		
 		<a href="javascript:unpassChapter()" class="easyui-linkbutton"
 		data-options="iconCls:'icon-remove',plain:true" style="float:left">不通过</a>
+		
+		<a href="javascript:SensitiveWordCheck()" class="easyui-linkbutton"
+		data-options="iconCls:'icon-remove',plain:true" style="float:left">机器审核</a>
 	</div>
 	
 	
@@ -93,6 +96,7 @@
 				}
 			}, 
 			{field : 'standby_1',title : '审核状态',width : 50,align : 'center'}, 
+			{field : 'standby_3',title : '机器审核结果',width : 50,align : 'center'}, 
 		]],
 		toolbar : "#novelChapter_manager_search"
 	});
@@ -196,6 +200,37 @@
 				url:'unpassChapter',
 				type:"post",
 				data:{"id":cids},
+				dataType:"json",
+				success:function(data){
+					data=$.trim(data);
+					if(data=="0"){
+						$.messager.alert("温馨提示", "没有数据要不通过，请查看", "error");
+					}else{
+						$.messager.show({title:'成功提示',msg:'不通过成功...',timeout:2000,showType:'slide'});
+						//重新加载数据
+						$("#show_novelChapter_info").datagrid("reload");
+					}
+				}
+			})
+		}
+	}
+	
+	//机器审核
+	function SensitiveWordCheck(){
+		var rows=$('#show_novelChapter_info').datagrid("getChecked");
+		if(rows.length<=0){
+			$.messager.alert("温馨提示", "请选中一行数据进行查看", "error");
+		}else{
+			var address="";
+			
+			for(var i=0;i<rows.length-1;i++){
+				address+=rows[i].caddress+",";
+			}
+			address+=rows[i].caddress;
+			$.ajax({
+				url:'SensitiveWordCheck',
+				type:"post",
+				data:{"caddress":address},
 				dataType:"json",
 				success:function(data){
 					data=$.trim(data);

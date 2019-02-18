@@ -77,6 +77,7 @@
 					<li id="checkNovel_manage">审查上传小说信息</li>
 					<li id="uncheckNovel_manage">待审查小说</li>
 					<li id="uncheckNovelChapter_manage">待审查小说章节</li>
+					
 				</ul>
 				</li>
 			</ul>

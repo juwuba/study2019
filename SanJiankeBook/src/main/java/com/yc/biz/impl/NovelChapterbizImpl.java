@@ -11,6 +11,7 @@ import com.yc.bean.Novel;
 import com.yc.bean.NovelChapter;
 import com.yc.biz.NovelChapterbiz;
 import com.yc.dao.BaseDao;
+import com.yc.utils.SentivewordCheck;
 import com.yc.bean.NovelChapter;
 import com.yc.biz.NovelChapterbiz;
 import com.yc.dao.BaseDao;
@@ -115,6 +116,14 @@ private  BaseDao bd;
 		chapter.setCid(cid);
 		List<NovelChapter> list=this.bd.findAll(chapter, "showContent");
 		return list;
+	}
+
+
+	@Override
+	//机器审核小说章节
+	public void SensitiveWordCheck(String c) {
+		
+		
 	}
 
 }

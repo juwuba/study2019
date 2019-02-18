@@ -43,6 +43,7 @@ import com.yc.biz.Userbiz;
 import com.yc.biz.impl.NovelTypebizImpl;
 import com.yc.dao.BaseDao;
 import com.yc.help.StaticContain;
+import com.yc.utils.SentivewordCheck;
 import com.yc.web.upload.ForFile;
 import com.yc.web.upload.UploadFileUtil;
 import com.yc.web.upload.UploadFileUtil.UploadFile;
@@ -540,5 +541,22 @@ public class NovelController {
 		userbiz.addUserinfo2(user);
 		return "1";
 	}
+	
+//使用dfa算法自动识别小说敏感词
+		@RequestMapping(value="/SensitiveWordCheck")
+		@ResponseBody
+		public String sensitiviWorkCheck(HttpServletRequest request,Model model,Novel novel,@RequestParam(value="caddress") String cid) throws IOException{
+			logger.info("使用dfa算法自动识别小说敏感词");
+	    	String[] cids=cid.split(",");
+	    	SentivewordCheck sCheck=new SentivewordCheck();
+	    	for(String c:cids){
+	    		
+	    		sCheck.SensitiveWordCheck(request,c);
+	    		//this.novelchapterbiz.SensitiveWordCheck(c);
+	    	}
+	    	return "1";
+		}
+	
+	
 }
 

@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.jasper.tagplugins.jstl.core.Out;
 
 /**
@@ -32,12 +34,13 @@ public class SensitiveWordInit {
 	 * @author chenming 
 	 * @date 2014年4月20日 下午2:28:32
 	 * @version 1.0
+	 * @param request 
 	 */
 	@SuppressWarnings("rawtypes")
-	public Map initKeyWord(){
+	public Map initKeyWord(HttpServletRequest request){
 		try {
 			//读取敏感词库
-			Set<String> keyWordSet = readSensitiveWordFile();
+			Set<String> keyWordSet = readSensitiveWordFile(request);
 			//将敏感词库加入到HashMap中
 			addSensitiveWordToHashMap(keyWordSet);
 			//spring获取application，然后application.setAttribute("sensitiveWordMap",sensitiveWordMap);
@@ -102,7 +105,22 @@ public class SensitiveWordInit {
 				else{     //不存在则，则构建一个map，同时将isEnd设置为0，因为他不是最后一个
 					newWorMap = new HashMap<String,String>();
 					newWorMap.put("isEnd", "0");     //不是最后一个
-					nowMap.put(keyChar, newWorMap);
+					nowMap.put(keyChar, newWorMap);//这里有一个关键地方，那就是nowmap里面是放置了另一个map，然后在下一步操作newwormap又复制一份给nowMap，之后就是newWorMap
+						//重新new了一个，后面又重新走到nowmap.put()这一步，构成了一个自循环
+					/***
+					 * 整个循环它干的事情就是下面这个 HashMap map1=new HashMap();
+						HashMap map3=map1;
+						HashMap<String,String> map2=new HashMap<String,String>();
+						map2.put("map2", "map2_value");
+						map3.put("map1", map2);
+						map3=map2;
+						map2=new HashMap<String,String>();
+						map2.put("isend", "0");
+						map3.put("map3", map2);
+						System.out.println(map1);
+						System.out.println(map1.get("map2"));
+
+					 */
 					nowMap = newWorMap;
 				}
 				
@@ -119,13 +137,15 @@ public class SensitiveWordInit {
 	 * @date 2014年4月20日 下午2:31:18
 	 * @return
 	 * @version 1.0
+	 * @param request 
 	 * @throws Exception 
 	 */
 	@SuppressWarnings("resource")
-	private Set<String> readSensitiveWordFile() throws Exception{
+	private Set<String> readSensitiveWordFile(HttpServletRequest request) throws Exception{
 		Set<String> set = null;
-		String path=SensitiveWordInit.class.getClassLoader().getResource("")+"../../"+"src/main/resources/SensitiveWord.txt";
-		path=path.substring(6);
+		String path=request.getServletContext().getRealPath("/")+"WEB-INF/classes/SensitiveWord.txt";
+		//String path=SensitiveWordInit.class.getClassLoader().getResource("")+"../../"+"src/main/resources/SensitiveWord.txt";
+		//path=path.substring(6);
 		File file = new File(path);    //读取文件
 		InputStreamReader read = new InputStreamReader(new FileInputStream(file),ENCODING);
 		try {
@@ -148,8 +168,9 @@ public class SensitiveWordInit {
 		return set;
 	}
 	public static void main(String[] args) throws Exception {
-		new SensitiveWordInit().initKeyWord();
-//		String path=SensitiveWordInit.class.getClassLoader().getResource("")+"../../"+"src/main/resources/SensitiveWord.txt";
+//		new SensitiveWordInit().initKeyWord();
+		String path=SensitiveWordInit.class.getClassLoader().getResource("")+"../../"+"src/main/resources/SensitiveWord.txt";
 //		System.out.println(path.substring(6));
+
 	}
 }
