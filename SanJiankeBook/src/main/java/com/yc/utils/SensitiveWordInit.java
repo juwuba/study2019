@@ -7,12 +7,17 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.jasper.tagplugins.jstl.core.Out;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.yc.bean.SensitiveWord;
+import com.yc.dao.BaseDao;
 
 /**
  * @Description: 初始化敏感词库，将敏感词加入到HashMap中，构建DFA算法模型
@@ -22,28 +27,30 @@ import org.apache.jasper.tagplugins.jstl.core.Out;
  * @version 1.0
  */
 public class SensitiveWordInit {
-	private String ENCODING = "UTF8";    //字符编码
+	private String ENCODING = "UTF8"; // 字符编码
 	@SuppressWarnings("rawtypes")
 	public HashMap sensitiveWordMap;
-	
-	public SensitiveWordInit(){
+
+	public SensitiveWordInit() {
 		super();
 	}
-	
+
 	/**
-	 * @author chenming 
+	 * @author chenming
 	 * @date 2014年4月20日 下午2:28:32
 	 * @version 1.0
-	 * @param request 
+	 * @param request
+	 * @param set
 	 */
 	@SuppressWarnings("rawtypes")
-	public Map initKeyWord(HttpServletRequest request){
+	public Map initKeyWord(HttpServletRequest request, Set set) {
 		try {
-			//读取敏感词库
-			Set<String> keyWordSet = readSensitiveWordFile(request);
-			//将敏感词库加入到HashMap中
+			// 读取敏感词库
+//			Set<String> keyWordSet = readSensitiveWordFile(request);
+			Set<String> keyWordSet = set;
+			// 将敏感词库加入到HashMap中
 			addSensitiveWordToHashMap(keyWordSet);
-			//spring获取application，然后application.setAttribute("sensitiveWordMap",sensitiveWordMap);
+			// spring获取application，然后application.setAttribute("sensitiveWordMap",sensitiveWordMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -52,80 +59,50 @@ public class SensitiveWordInit {
 
 	/**
 	 * 读取敏感词库，将敏感词放入HashSet中，构建一个DFA算法模型：<br>
-	 * 中 = {
-	 *      isEnd = 0
-	 *      国 = {<br>
-	 *      	 isEnd = 1
-	 *           人 = {isEnd = 0
-	 *                民 = {isEnd = 1}
-	 *                }
-	 *           男  = {
-	 *           	   isEnd = 0
-	 *           		人 = {
-	 *           			 isEnd = 1
-	 *           			}
-	 *           	}
-	 *           }
-	 *      }
-	 *  五 = {
-	 *      isEnd = 0
-	 *      星 = {
-	 *      	isEnd = 0
-	 *      	红 = {
-	 *              isEnd = 0
-	 *              旗 = {
-	 *                   isEnd = 1
-	 *                  }
-	 *              }
-	 *      	}
-	 *      }
-	 * @author chenming 
+	 * 中 = { isEnd = 0 国 = {<br>
+	 * isEnd = 1 人 = {isEnd = 0 民 = {isEnd = 1} } 男 = { isEnd = 0 人 = { isEnd = 1 }
+	 * } } } 五 = { isEnd = 0 星 = { isEnd = 0 红 = { isEnd = 0 旗 = { isEnd = 1 } } } }
+	 * 
+	 * @author chenming
 	 * @date 2014年4月20日 下午3:04:20
-	 * @param keyWordSet  敏感词库
+	 * @param keyWordSet 敏感词库
 	 * @version 1.0
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addSensitiveWordToHashMap(Set<String> keyWordSet) {
-		sensitiveWordMap = new HashMap(keyWordSet.size());     //初始化敏感词容器，减少扩容操作
-		String key = null;  
+		sensitiveWordMap = new HashMap(keyWordSet.size()); // 初始化敏感词容器，减少扩容操作
+		String key = null;
 		Map nowMap = null;
 		Map<String, String> newWorMap = null;
-		//迭代keyWordSet
+		// 迭代keyWordSet
 		Iterator<String> iterator = keyWordSet.iterator();
-		while(iterator.hasNext()){
-			key = iterator.next();    //关键字
+		while (iterator.hasNext()) {
+			key = iterator.next(); // 关键字
 			nowMap = sensitiveWordMap;
-			for(int i = 0 ; i < key.length() ; i++){
-				char keyChar = key.charAt(i);       //转换成char型
-				Object wordMap = nowMap.get(keyChar);       //获取
-				
-				if(wordMap != null){        //如果存在该key，直接赋值
-					nowMap = (Map) wordMap;
-				}
-				else{     //不存在则，则构建一个map，同时将isEnd设置为0，因为他不是最后一个
-					newWorMap = new HashMap<String,String>();
-					newWorMap.put("isEnd", "0");     //不是最后一个
-					nowMap.put(keyChar, newWorMap);//这里有一个关键地方，那就是nowmap里面是放置了另一个map，然后在下一步操作newwormap又复制一份给nowMap，之后就是newWorMap
-						//重新new了一个，后面又重新走到nowmap.put()这一步，构成了一个自循环
-					/***
-					 * 整个循环它干的事情就是下面这个 HashMap map1=new HashMap();
-						HashMap map3=map1;
-						HashMap<String,String> map2=new HashMap<String,String>();
-						map2.put("map2", "map2_value");
-						map3.put("map1", map2);
-						map3=map2;
-						map2=new HashMap<String,String>();
-						map2.put("isend", "0");
-						map3.put("map3", map2);
-						System.out.println(map1);
-						System.out.println(map1.get("map2"));
+			for (int i = 0; i < key.length(); i++) {
+				char keyChar = key.charAt(i); // 转换成char型
+				Object wordMap = nowMap.get(keyChar); // 获取
 
+				if (wordMap != null) { // 如果存在该key，直接赋值
+					nowMap = (Map) wordMap;
+				} else { // 不存在则，则构建一个map，同时将isEnd设置为0，因为他不是最后一个
+					newWorMap = new HashMap<String, String>();
+					newWorMap.put("isEnd", "0"); // 不是最后一个
+					nowMap.put(keyChar, newWorMap);// 这里有一个关键地方，那就是nowmap里面是放置了另一个map，然后在下一步操作newwormap又复制一份给nowMap，之后就是newWorMap
+					// 重新new了一个，后面又重新走到nowmap.put()这一步，构成了一个自循环
+					/***
+					 * 整个循环它干的事情就是下面这个 HashMap map1=new HashMap(); HashMap map3=map1;
+					 * HashMap<String,String> map2=new HashMap<String,String>(); map2.put("map2",
+					 * "map2_value"); map3.put("map1", map2); map3=map2; map2=new
+					 * HashMap<String,String>(); map2.put("isend", "0"); map3.put("map3", map2);
+					 * System.out.println(map1); System.out.println(map1.get("map2"));
+					 * 
 					 */
 					nowMap = newWorMap;
 				}
-				
-				if(i == key.length() - 1){
-					nowMap.put("isEnd", "1");    //最后一个
+
+				if (i == key.length() - 1) {
+					nowMap.put("isEnd", "1"); // 最后一个
 				}
 			}
 		}
@@ -133,43 +110,52 @@ public class SensitiveWordInit {
 
 	/**
 	 * 读取敏感词库中的内容，将内容添加到set集合中
-	 * @author chenming 
+	 * 
+	 * @author chenming
 	 * @date 2014年4月20日 下午2:31:18
 	 * @return
 	 * @version 1.0
-	 * @param request 
-	 * @throws Exception 
+	 * @param request
+	 * @throws Exception
 	 */
 	@SuppressWarnings("resource")
-	private Set<String> readSensitiveWordFile(HttpServletRequest request) throws Exception{
+	private Set<String> readSensitiveWordFile(HttpServletRequest request) throws Exception {
 		Set<String> set = null;
-		String path=request.getServletContext().getRealPath("/")+"WEB-INF/classes/SensitiveWord.txt";
-		//String path=SensitiveWordInit.class.getClassLoader().getResource("")+"../../"+"src/main/resources/SensitiveWord.txt";
-		//path=path.substring(6);
-		File file = new File(path);    //读取文件
-		InputStreamReader read = new InputStreamReader(new FileInputStream(file),ENCODING);
+		WebApplicationContext wc = WebApplicationContextUtils.getWebApplicationContext(request.getServletContext());
+		BaseDao bd = (BaseDao) wc.getBean("baseDaoMybatisImpl");
+		List<SensitiveWord> list = bd.findAll(new SensitiveWord(), "showSensitive");
+		for (SensitiveWord sw : list) {
+			set.add(sw.getName());
+		}
+		String path = request.getServletContext().getRealPath("/") + "WEB-INF/classes/SensitiveWord.txt";
+		// String
+		// path=SensitiveWordInit.class.getClassLoader().getResource("")+"../../"+"src/main/resources/SensitiveWord.txt";
+		// path=path.substring(6);
+		File file = new File(path); // 读取文件
+		InputStreamReader read = new InputStreamReader(new FileInputStream(file), ENCODING);
 		try {
-			if(file.isFile() && file.exists()){      //文件流是否存在
+			if (file.isFile() && file.exists()) { // 文件流是否存在
 				set = new HashSet<String>();
 				BufferedReader bufferedReader = new BufferedReader(read);
 				String txt = null;
-				while((txt = bufferedReader.readLine()) != null){    //读取文件，将文件内容放入到set中
+				while ((txt = bufferedReader.readLine()) != null) { // 读取文件，将文件内容放入到set中
 					set.add(txt);
-			    }
-			}
-			else{         //不存在抛出异常信息
+				}
+			} else { // 不存在抛出异常信息
 				throw new Exception("敏感词库文件不存在");
 			}
 		} catch (Exception e) {
 			throw e;
-		}finally{
-			read.close();     //关闭文件流
+		} finally {
+			read.close(); // 关闭文件流
 		}
 		return set;
 	}
+
 	public static void main(String[] args) throws Exception {
 //		new SensitiveWordInit().initKeyWord();
-		String path=SensitiveWordInit.class.getClassLoader().getResource("")+"../../"+"src/main/resources/SensitiveWord.txt";
+		String path = SensitiveWordInit.class.getClassLoader().getResource("") + "../../"
+				+ "src/main/resources/SensitiveWord.txt";
 //		System.out.println(path.substring(6));
 
 	}

@@ -95,6 +95,33 @@ $(function(){
 		}
 	});
 	
+	$('#novel_menu5').tree({
+		onClick:function(node){
+			var id = node.id; //获取点击的节点
+			var title= "三剑客文学";
+			var href = "back/showAllSensitiveWord.jsp";
+			var tabObj = $('#index_content' );
+			console.info(id);
+
+			if( id=="showAllSensitiveWord" ){	
+				if( tabObj.tabs("exists","所有敏感词汇")){
+					//选中
+					tabObj.tabs("select","所有敏感词汇");
+					return ;
+				}else{
+					title="所有敏感词汇";
+					href="back/showAllSensitiveWord.jsp";
+				}
+			}
+
+			tabObj.tabs('add',{
+				title:title,
+				href:href,
+				fit:true,
+				closable:true
+			});
+		}
+	});
 	
 	$('#novel_menu4').tree({
 		onClick:function(node){

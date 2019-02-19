@@ -121,8 +121,11 @@ private  BaseDao bd;
 
 	@Override
 	//机器审核小说章节
-	public void SensitiveWordCheck(String c) {
-		
+	public void SensitiveWordCheck(String c,String cid) {
+		NovelChapter chapter=new NovelChapter();
+		chapter.setCid(Integer.parseInt(cid));
+		chapter.setStandby_3(c);
+		 this.bd.update(chapter, "SensitiveWordCheck");
 		
 	}
 

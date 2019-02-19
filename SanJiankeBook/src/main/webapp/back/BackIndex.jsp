@@ -81,7 +81,18 @@
 				</ul>
 				</li>
 			</ul>
+    	</div> 
+    	<div title="敏感词汇管理">  
+        	   <ul id="novel_menu5" class="easyui-tree">
+				<li id="showAllSensitiveWord3">
+					<span id="showAllSensitiveWord2">敏感词汇管理</span>
+				<ul>
+					<li id="showAllSensitiveWord">所有敏感词汇</li>
+				</ul>
+			</li>
+			</ul>
     	</div>  
+    	
 		</div>  
 	</div>
 	

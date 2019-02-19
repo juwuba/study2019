@@ -75,7 +75,7 @@
 		loadMsg:'数据加载中...',
 		striped:true,		//斑马线效果
 		pagination : true, //显示分页栏
-		nowrap:true,		//超出宽度自动截取
+		nowrap:false,		//超出宽度自动截取
 		rownumber:true,		//显示行数
 		sortName:'cid',		//排序的
 		remoteSort:false,	//前段排序而非服务器的排序，自己的排序
@@ -222,15 +222,17 @@
 			$.messager.alert("温馨提示", "请选中一行数据进行查看", "error");
 		}else{
 			var address="";
-			
+			var cids="";
 			for(var i=0;i<rows.length-1;i++){
 				address+=rows[i].caddress+",";
+				cids+=rows[i].cid+",";
 			}
 			address+=rows[i].caddress;
+			cids+=rows[i].cid;
 			$.ajax({
 				url:'SensitiveWordCheck',
 				type:"post",
-				data:{"caddress":address},
+				data:{"caddress":address,"cid":cids},
 				dataType:"json",
 				success:function(data){
 					data=$.trim(data);

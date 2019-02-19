@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	<!-- 审核小说章节 -->
 	<select id="checkNovelChapter" parameterType="NovelChapter" resultMap="UncheckNovelChapter">
-		select cid,novel.nid,npicture,tname,nname,cname,caddress,novel_chapter.standby_1
+		select cid,novel.nid,npicture,tname,nname,cname,caddress,novel_chapter.standby_1,novel_chapter.standby_3
 		from novel_type
 		inner join novel
 		on novel.tid=novel_type.tid
@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 审核小说章节的详情 -->
 	<select id="showDetails" parameterType="NovelChapter" resultMap="UncheckNovelChapter" >
-		select cid,novel.nid,npicture,tname,nname,cname,caddress,novel_chapter.standby_1
+		select cid,novel.nid,npicture,tname,nname,cname,caddress,novel_chapter.standby_1,novel_chapter.standby_3
 		from novel_type
 		inner join novel
 		on novel.tid=novel_type.tid
@@ -43,9 +43,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 通过待审核的章节 -->
 	<update id="passChapter" parameterType="NovelChapter">
 		update novel_chapter set standby_1='通过' where cid in (#{cid});
+	</update> 
+	
+	<!-- 将机器识别的记录放进章节中 -->
+	<update id="SensitiveWordCheck" parameterType="NovelChapter">
+		update novel_chapter set standby_3=#{standby_3} where cid in (#{cid});
 	</update>
 	
-	<!-- 不通过待审核的章节 -->
+	<!-- 未通过待审核的章节 -->
 	<update id="unpassChapter" parameterType="NovelChapter">
 		update novel_chapter set standby_1='未通过' where cid in (#{cid});
 	</update>
@@ -59,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="cname" column="cname" />
 		<result property="caddress" column="caddress" />
 		<result property="standby_1" column="standby_1" />
+		<result property="standby_3" column="standby_3" />
 	</resultMap>
 	
 	<!-- 得到章节编号 -->
@@ -68,7 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 查看小说章节内容 -->
 	<select id="showContent" parameterType="NovelChapter" resultMap="UncheckNovelChapter">
-		select cid,novel_chapter.nid,cname,caddress,novel_chapter.standby_1,novel_chapter.standby_2,novel_type.tname,novel.nname
+		select cid,novel_chapter.nid,cname,caddress,novel_chapter.standby_1,novel_chapter.standby_2,novel_chapter.standby_3,novel_type.tname,novel.nname
 		from novel_type
 		inner join novel
 		on novel.tid=novel_type.tid

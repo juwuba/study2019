@@ -33,5 +33,5 @@ public interface NovelChapterbiz {
 	//查看小说章节内容
 	List<NovelChapter> ShowContent(Integer cid);
 	//机器审核小说章节
-	void SensitiveWordCheck(String c);
+	void SensitiveWordCheck(String c, String c2);
 }
