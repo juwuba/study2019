@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yc.mapper.SensitiveWordMapper">
+	
+	<insert id="addSensitiveWord" parameterType="SensitiveWord" useGeneratedKeys="true" keyProperty="id">
+		insert into sensitive_word(name) values(#{name})
+	</insert>
+	
+	<select id="showSensitive" parameterType="SensitiveWord" resultType="SensitiveWord">
+		select id,name  from sensitive_word 
+	</select>
+	
+	<select id="showSensitiveBypage" parameterType="SensitiveWord" resultType="SensitiveWord">
+		select id,name  from sensitive_word limit #{start},#{end}
+	</select>
+	
+	<update id="updateSensitiveWord" parameterType="SensitiveWord">
+		update sensitive_word set name=#{name}  where id=#{id}
+	</update>
+	
+	
+	
+	
+	
+</mapper>
